@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+  proxy:
+    networks:
+      - "board"
+      - "web"
+      - "shuffley"
+  board-app-backend:
+    networks:
+      - "board"
+  board-app-frontend:
+    networks:
+      - "board"
+  shuffley:
+    networks:
+      - "shuffley"
+
+networks:
+  board:
+  web:
+  shuffley:

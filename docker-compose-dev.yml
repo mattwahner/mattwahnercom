@@ -1,0 +1,55 @@
+version: '3.1'
+
+services:
+  proxy:
+    build: proxy/.
+    depends_on:
+      - board-app-frontend
+      - shuffley
+    restart: always
+  board-app-backend:
+    build: board/backend/.
+    networks:
+      - board-mongo
+    volumes:
+      - ./board/backend/secrets:/run/secrets
+    depends_on:
+      - board-db
+  board-app-frontend:
+    build: board/frontend/.
+    depends_on:
+      - board-app-backend
+  shuffley:
+    build: shuffley/.
+    ports:
+      - "80:8000"
+    networks:
+      - "shuffley-postgres"
+    environment:
+      - SHUFFLEY_ALLOWED_HOST=localhost
+      - SHUFFLEY_DEBUG=True
+      - SHUFFLEY_DATABASE_HOST=shuffley-db
+      - SHUFFLEY_DATABASE_PORT=5432
+    depends_on:
+      - shuffley-db
+    restart: always
+    volumes:
+      - ./shuffley/secrets:/run/secrets
+  board-db:
+    image: mongo
+    networks:
+      - "board-mongo"
+  shuffley-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - "shuffley-postgres"
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=shuffley
+
+networks:
+  board-mongo:
+  shuffley-postgres:

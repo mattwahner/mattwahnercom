@@ -1,0 +1,8 @@
+bin/
+include/
+lib/
+venv/
+share/
+.idea/
+**/__pycache__/
+db.sqlite3

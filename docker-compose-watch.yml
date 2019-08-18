@@ -1,0 +1,7 @@
+version: '3.1'
+
+services:
+  shuffley:
+    command: sh watch.sh
+    volumes:
+      - ./shuffley:/usr/src/app

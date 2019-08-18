@@ -1,0 +1,45 @@
+version: '3.1'
+
+services:
+  proxy:
+    image: "${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_PROJECT_NAME}-proxy:${CI_BUILD_REF_NAME}"
+    ports:
+      - "80:80"
+      - "443:443"
+    secrets:
+      - board.crt
+      - board.key
+      - shuffley.crt
+      - shuffley.key
+  board-app-backend:
+    image: "${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_PROJECT_NAME}-board-app-backend:${CI_BUILD_REF_NAME}"
+    secrets:
+      - board.env
+      - board-connection.json
+  board-app-frontend:
+    image: "${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_PROJECT_NAME}-board-app-frontend:${CI_BUILD_REF_NAME}"
+  shuffley:
+    image: "${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_PROJECT_NAME}-shuffley:${CI_BUILD_REF_NAME}"
+    environment:
+      - SHUFFLEY_ALLOWED_HOST=shuffley.mattwahner.com
+      - SHUFFLEY_DEBUG=False
+      - SHUFFLEY_DATABASE_HOST=databases.mattwahner.com
+      - SHUFFLEY_DATABASE_PORT=5432
+    secrets:
+      - shuffley_secret_settings.json
+
+secrets:
+  board.env:
+    file: ./secrets/board/board.env
+  board-connection.json:
+    file: ./secrets/board/board-connection.json
+  board.crt:
+    file: ./secrets/board/board.crt
+  board.key:
+    file: ./secrets/board/board.key
+  shuffley_secret_settings.json:
+    file: ./secrets/shuffley/shuffley_secret_settings.json
+  shuffley.crt:
+    file: ./secrets/shuffley/shuffley.crt
+  shuffley.key:
+    file: ./secrets/shuffley/shuffley.key
